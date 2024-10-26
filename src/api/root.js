@@ -1,0 +1,1 @@
+export const APIRoot = (import.meta.env.VUE_APP_INVESTMENT|| "") + "/";
