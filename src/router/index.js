@@ -111,6 +111,16 @@ const routes = [
             requiresAuth: true
           }
       },
+      //  added by me 
+      {
+        path: '/customers',
+        name: 'Customers',
+        component: () =>
+          import(/* webpackChunkName: "dashboard" */ '@/views/Customers.vue'),
+          meta:{
+            requiresAuth: true
+          }
+      },
     ],
   },
   {
