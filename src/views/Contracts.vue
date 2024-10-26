@@ -83,24 +83,24 @@
 			<div class="p-3">
 				<CFormLabel>Contract</CFormLabel>
 				<CFormInput type="text" v-model="formData.title" />
-				<br>
+				<br />
 				<CFormLabel>Currency</CFormLabel>
 				<CFormSelect v-model="formData.payment_currency">
 					<option :value="currency.val" v-for="currency in currencyList" :key="currency.id">
 						{{ currency.name }}
 					</option>
 				</CFormSelect>
-				<br>
+				<br />
 				<CFormLabel>Balance</CFormLabel>
 				<CFormInput type="number" v-model="formData.balance" />
-				<br>
+				<br />
 				<CFormLabel>Fond</CFormLabel>
 				<CFormSelect v-model="formData.fond" @click="fetchFondList">
 					<option :value="fond.id" v-for="fond in fondList" :key="fond.id">
 						{{ fond.title?.uz }} {{ fond.id }}
 					</option>
 				</CFormSelect>
-				<br>
+				<br />
 				<CFormLabel>Description</CFormLabel>
 				<CFormTextarea v-model="formData.description"></CFormTextarea>
 			</div>
@@ -113,7 +113,7 @@
 </template>
 
 <script>
-import axios from '@/api/axios';
+import axios from '@/api/axios'
 import { ref, onMounted, reactive, computed } from 'vue'
 import { Contracts, Organizations, Fonds, OrganizationContracts } from '@/api/schema'
 import {
@@ -163,22 +163,23 @@ export default {
 			{ name: 'EUR', val: 'eur', id: 4 },
 		])
 
-		async function getList() {
-			listData.value = await Contracts.list().then(res => res.data)
-		}
-
 		onMounted(() => {
 			getList()
 		})
+		async function getList() {
+			listData.value = await Contracts.list().then(res => res.data);
+			// listData.value = await axios.get('admin/contract/list/').then(res => res.data)
+		}
+
 		const fieldTwo = computed(() => {
 			return OrganizationContracts?.fields
 		})
 		const fields = computed(() => {
 			return Contracts?.fields
 		})
-		async function getList() {
-			listData.value = await OrganizationContracts.list().then(res => res?.data || [])
-		}
+		// async function getList() {
+		// 	listData.value = await OrganizationContracts.list().then(res => res?.data || [])
+		// }
 		async function fetchFondList(id) {
 			fondList.value = await Fonds.list().then(res => res?.data || [])
 			let element = id.target
@@ -187,10 +188,7 @@ export default {
 			}
 		}
 		async function submitForm() {
-			console.log(formData)
 			try {
-				// await OrganizationContracts.create(formData)
-				// admin/contract/create/
 				await axios.post(`admin/contract/create/`, formData)
 				isVisibleSidebar.value = false
 			} catch (e) {
