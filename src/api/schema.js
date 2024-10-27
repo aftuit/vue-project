@@ -515,6 +515,11 @@ export const Protocols = new APINode(
 		},
 		{
 			visible: true,
+			key: "status",
+			label: "Status",
+		},
+		{
+			visible: true,
 			key: "profit",
 			label: "foyda",
 		},

@@ -37,6 +37,9 @@
                                         <div>{{ item.balance }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>
+                                        <div>{{ item.status }}</div>
+                                    </CTableDataCell>
+                                    <CTableDataCell>
                                         <div>{{ item.profit }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>

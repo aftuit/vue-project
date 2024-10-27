@@ -14,7 +14,7 @@
                                             {{ label.label }}
                                         </CTableHeaderCell>
                                     </template>
-                                    <CTableHeaderCell>Tasdiqlash</CTableHeaderCell>
+                                    <CTableHeaderCell>Harakatlar</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
@@ -41,11 +41,18 @@
                                         <div>{{ item.subdistribution }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>
-                                        <CButton style="color:white" :disabled="item.status == 'Completed'" size="sm"
-                                            class="btn btn-success" variant="success" @click="verifyStatus(item)">
-                                            <CIcon icon="cil-check" height="18" alt="true" style="margin-right: 5px;" />
-                                            Tasdiqlash
-                                        </CButton>
+                                        <div class="d-flex">
+                                            <CButton :disabled="item.status == 'Completed'"
+                                                v-c-tooltip="{ content: 'Tasdiqlash', placement: 'top' }" size="sm"
+                                                class="btn btn-success text-white" @click="verifyStatus(item.id)">
+                                                <CIcon icon="cil-check" height="18" alt="true"
+                                                    style="margin-right: 5px;" />
+                                            </CButton>
+                                            <CButton v-c-tooltip="{ content: `O'chirish`, placement: 'top' }" size="sm"
+                                                class="btn btn-danger ms-1 text-white" @click="deleteItem(item.id)">
+                                                <CIcon icon="cil-check" height="18" />
+                                            </CButton>
+                                        </div>
                                     </CTableDataCell>
                                 </CTableRow>
                             </CTableBody>
@@ -99,13 +106,18 @@ import axios from '@/api/axios';
 import { ref, onMounted, computed, watch, reactive } from 'vue'
 import { Organizations, Fonds, OrganizationContracts } from '@/api/schema'
 import { getItem } from '@/helpers/persistanceStorage'
+import { cilTrash } from '@coreui/icons';
+import { CIcon } from '@coreui/icons-vue';
 import { CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect, CButton, CTableRow, CModalBody } from "@coreui/vue";
+// import CIcon from '@coreui/icons-vue';
 export default {
     name: 'DashboardPage',
     components: {
         CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect,
         CButton,
-        CTableRow
+        CTableRow,
+        cilTrash,
+        CIcon
     },
     onMounted() {
 
@@ -210,8 +222,13 @@ export default {
             })
             getList()
         }
+        async function deleteItem(id) {
+            await axios.delete(`admin/contract/org-contract/delete/${id}/`)
+            getList()
+        }
         return {
             verifyStatus,
+            deleteItem,
             listData,
             fields,
             isVisibleSidebar,

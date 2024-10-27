@@ -12,7 +12,7 @@
 									<CTableHeaderCell v-for="label in fields" :key="label">{{
 				label.label
 			}}</CTableHeaderCell>
-									<CTableHeaderCell>Tasdiqlash</CTableHeaderCell>
+									<CTableHeaderCell>Harakat</CTableHeaderCell>
 								</CTableRow>
 							</CTableHead>
 							<CTableBody>
@@ -54,11 +54,18 @@
 										<div>{{ item.profit }}</div>
 									</CTableDataCell>
 									<CTableDataCell>
-										<CButton style="color:white" :disabled="item.status == 'Completed'" size="sm"
-											class="btn btn-success" variant="success">
-											<CIcon icon="cil-check" height="18" alt="true" style="margin-right: 5px;" />
-											Tasdiqlash
-										</CButton>
+										<div class="d-flex">
+											<CButton :disabled="item.status == 'Completed'"
+												v-c-tooltip="{ content: 'Tasdiqlash', placement: 'top' }" size="sm"
+												class="btn btn-success text-white" @click="verifyStatus(item.id)">
+												<CIcon icon="cil-check" height="18" alt="true"
+													style="margin-right: 5px;" />
+											</CButton>
+											<CButton v-c-tooltip="{ content: `O'chirish`, placement: 'top' }" size="sm"
+												class="btn btn-danger ms-1 text-white" @click="deleteItem(item.id)">
+												<CIcon icon="cil-x-circle" height="18" />
+											</CButton>
+										</div>
 									</CTableDataCell>
 								</CTableRow>
 								<CTableRow> </CTableRow>
@@ -77,7 +84,7 @@
 			</CModalHeader>
 
 			<div class="p-3">
-				<CFormLabel>Contract</CFormLabel>
+				<CFormLabel>Contract number</CFormLabel>
 				<CFormInput type="text" v-model="formData.title" />
 				<br />
 				<CFormLabel>Currency</CFormLabel>
@@ -191,13 +198,17 @@ export default {
 				console.log(e.response?.data)
 			}
 		}
-		async function verifyStatus(dt) {
-            console.log(dt)
-            await axios.put(`admin/contract/update/${dt.id}/`, {
-                status: 'Completed'
-            })
-            getList()
-        }
+		async function verifyStatus(id) {
+			console.log(id)
+			await axios.put(`admin/contract/update/${id}/`, {
+				status: 'Completed'
+			})
+			getList()
+		}
+		async function deleteItem(id) {
+			await axios.delete(`admin/contract/delete/${id}/`)
+			getList()
+		}
 		return {
 			listData,
 			fields,
@@ -208,7 +219,8 @@ export default {
 			fondList,
 			fetchFondList,
 			submitForm,
-			verifyStatus
+			verifyStatus,
+			deleteItem
 		}
 	},
 }
