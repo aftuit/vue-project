@@ -87,6 +87,13 @@
 				<CFormLabel>Contract number</CFormLabel>
 				<CFormInput type="text" v-model="formData.title" />
 				<br />
+				<CFormLabel>Contract type</CFormLabel>
+				<CFormSelect v-model="formData.contract_type">
+					<option :value="contract.val" v-for="contract in contract_typeList" :key="contract.id">
+						{{ contract.name }}
+					</option>
+				</CFormSelect>
+				<br />
 				<CFormLabel>Currency</CFormLabel>
 				<CFormSelect v-model="formData.payment_currency">
 					<option :value="currency.val" v-for="currency in currencyList" :key="currency.id">
@@ -153,6 +160,7 @@ export default {
 		const fondList = ref([])
 		const formData = reactive({
 			title: null,
+			contract_type: 'INVESTMENT',
 			fond: null,
 			description: '',
 			payment_currency: '',
@@ -164,6 +172,11 @@ export default {
 			{ name: 'RUB', val: 'rub', id: 2 },
 			{ name: 'USD', val: 'usd', id: 3 },
 			{ name: 'EUR', val: 'eur', id: 4 },
+		])
+		const contract_typeList = ref([
+			{ name: 'Investment', val: 'INVESTMENT' },
+			{ name: 'Dividend', val: 'DIVIDEND' },
+			{ name: 'Withdraw', val: 'WITHDRAW' }
 		])
 
 		onMounted(() => {
@@ -211,6 +224,7 @@ export default {
 		}
 		return {
 			listData,
+			contract_typeList,
 			fields,
 			isVisibleSidebar,
 			modalProtocol,

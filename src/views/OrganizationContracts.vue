@@ -50,7 +50,7 @@
                                             </CButton>
                                             <CButton v-c-tooltip="{ content: `O'chirish`, placement: 'top' }" size="sm"
                                                 class="btn btn-danger ms-1 text-white" @click="deleteItem(item.id)">
-                                                <CIcon icon="cil-check" height="18" />
+                                                <CIcon icon="cil-x-circle" height="18" />
                                             </CButton>
                                         </div>
                                     </CTableDataCell>

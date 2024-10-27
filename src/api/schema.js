@@ -368,11 +368,6 @@ export const Fonds = new APINode(
 		},
 		{
 			visible: true,
-			key: "reason",
-			label: "sabab",
-		},
-		{
-			visible: true,
 			key: "description",
 			label: "tarif",
 		},
@@ -536,7 +531,7 @@ export const Protocols = new APINode(
 		{
 			visible: true,
 			key: "more",
-			label: "",
+			label: "Harakat",
 		},
 	]
 );

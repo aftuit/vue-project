@@ -26,9 +26,6 @@
                       <div>{{ item.title.uz }}</div>
                     </CTableDataCell>
                     <CTableDataCell>
-                      <div>{{ item.reason.uz }}</div>
-                    </CTableDataCell>
-                    <CTableDataCell>
                       <div>{{ item.description.uz }}</div>
                     </CTableDataCell>
                     <CTableDataCell>

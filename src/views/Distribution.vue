@@ -80,7 +80,7 @@
                                     <td>{{ data.percent }}</td>
                                     <td>
                                         <CButton v-c-tooltip="{ content: `O'chirish`, placement: 'top' }" size="sm"
-                                            class="btn btn-danger text-white" @click="removeData(data.id)">
+                                            class="btn btn-danger text-white" @click="removeData(data.unique_id)">
                                             <CIcon icon="cil-x-circle" height="18" />
                                         </CButton>
                                     </td>
@@ -104,17 +104,6 @@
                             </tbody>
                             <CButton color="info" class="mt-2 text-white" size="sm" style="width: 130px;right: 0;"
                                 @click.prevent="createDistribution">Submit</CButton>
-                            <!-- <div class="d-inline-flex flex-row"> -->
-                            <!-- <CBadge color="success" @click="" shape="rounded-pill" style="    margin-right: 10px;
-    margin-left: 50px;cursor: pointer;">
-                                <CIcon icon="cil-check" height="18" alt="true" />
-                            </CBadge>
-
-                            <CBadge color="danger" shape="rounded-pill" @click="" style="cursor: pointer;">
-                                <CIcon icon="cil-x-circle" height="18" alt="true" />
-                            </CBadge> -->
-
-                            <!-- </div> -->
                         </table>
                     </CCardBody>
                 </CCard>
@@ -215,10 +204,15 @@ export default {
                 obj.balance = t.sum
                 return obj
             })
+            console.log({
+                subdistributions: selectedOrgWithBalance,
+                fond: fondData.value?.id,
+            });
             Distribution.create({
                 subdistributions: selectedOrgWithBalance,
                 fond: fondData.value?.id,
             })
+            router.push('/distributions')
         }
         const tableData = ref([
             // Your data goes here, e.g., an array of objects
@@ -228,7 +222,9 @@ export default {
 
         function addNewRow() {
             // Create a new row object with default 
+            const uniqueTime = new Date().getTime();
             const newRow = {
+                unique_id: uniqueTime,
                 factory: selectedOrganizations.value?.title?.uz, // You can set default values here
                 id: selectedOrganizations.value?.id, // You can set default values here
                 fond: fondData.value?.title?.uz,
@@ -244,7 +240,6 @@ export default {
         }
 
         const organizationPercent = computed(() => {
-            console.log({ saveFondBalance });
             return Number(distrAmount.value) * 100 / fondData.value.fond_balance
         })
         const fondPercent = computed(() => {
@@ -253,16 +248,15 @@ export default {
 
         })
         watch(distrAmount, () => {
-            console.log('saveFondBalance', saveFondBalance);
             tableData.value.map(t => {
-                // t.percent = Number(t.sum) * 100 / saveFondBalance
-                t.percent = Number(t.sum) * 100
+                t.percent = Number(t.sum) * 100 / saveFondBalance
+                // t.percent = Number(t.sum) * 100
             })
-            console.log(tableData)
         })
 
         function removeData(id) {
-            tableData.value.filter(t => t.id != id)
+            if (id == null) return; // Ensure id is valid
+            tableData.value = tableData.value.filter(t => t.unique_id != id)
         }
 
         const insertedProfit = ref(0)
