@@ -215,9 +215,8 @@ export default {
         //     fetchContractList()
         // })
 
-        async function verifyStatus(dt) {
-            console.log(dt)
-            await axios.put(`admin/contract/org-contract/update/${dt.id}/`, {
+        async function verifyStatus(id) {
+            await axios.put(`admin/contract/org-contract/update/${id}/`, {
                 status: 'Completed'
             })
             getList()

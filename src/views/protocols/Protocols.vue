@@ -105,6 +105,7 @@
 
 <script>
 import { ref, onMounted, computed, watch, reactive } from 'vue'
+import { useRouter } from 'vue-router';
 import { Protocols, Contracts, Fonds } from '@/api/schema'
 import { getItem } from '@/helpers/persistanceStorage'
 import { CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect } from "@coreui/vue";
@@ -117,6 +118,9 @@ export default {
 
     },
     setup() {
+
+        const router = useRouter()
+
         let listData = ref([])
         const isVisibleSidebar = ref(false)
         const modalProtocol = ref(null)
@@ -186,7 +190,7 @@ export default {
         // })
         function viewDistribution(item) {
             router.push({
-                name: 'Distribution',
+                name: 'ProtocolInfo',
                 params: { id: item.id },
             })
         }

@@ -15,6 +15,8 @@
                 <li v-for="key of Object.keys(selectedProtocol || {})" :key="key"
                     class="d-block mr-2 border-1 border-secondary cil-border-all p-1 solid">
                     <CBadge color="info" style="font-size: 13px;" shape="rounded-pill">{{ key }}: {{
+                        key === 'user'? selectedProtocol[key]?.get_full_name:
+                        key === 'fond' ? selectedProtocol[key]?.title?.uz:
                     selectedProtocol[key] }}
                     </CBadge>
                 </li>
