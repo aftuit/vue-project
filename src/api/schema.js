@@ -326,6 +326,12 @@ export const OrganizationContracts = new APINode(
 		},
 		{
 			visible: true,
+			isAddable: true,
+			key: "balance",
+			label: "Balansi",
+		},
+		{
+			visible: true,
 			isAddable: false,
 			key: "status",
 			label: "status",

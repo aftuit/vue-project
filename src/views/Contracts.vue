@@ -4,20 +4,14 @@
 			<CCol :md="12">
 				<CCard class="mb-4">
 					<CCardBody class="d-flex flex-column">
-						<CButton
-							component="button"
-							type="button"
-							color="info"
-							class="mb-2 align-self-end text-white"
-							@click="isVisibleSidebar = true"
-							>shartnoma qo'shish</CButton
-						>
+						<CButton component="button" type="button" color="info" class="mb-2 align-self-end text-white"
+							@click="isVisibleSidebar = true">shartnoma qo'shish</CButton>
 						<CTable align="middle" class="mb-0 border" hover responsive>
 							<CTableHead color="light">
 								<CTableRow>
 									<CTableHeaderCell v-for="label in fields" :key="label">{{
-										label.label
-									}}</CTableHeaderCell>
+				label.label
+			}}</CTableHeaderCell>
 								</CTableRow>
 							</CTableHead>
 							<CTableBody>
@@ -66,16 +60,10 @@
 				</CCard>
 			</CCol>
 		</CRow>
-		<CModal
-			@close="
-				() => {
+		<CModal @close="() => {
 					isVisibleSidebar = false
 				}
-			"
-			:keyboard="false"
-			:visible="isVisibleSidebar"
-			class="p-3"
-		>
+				" :keyboard="false" :visible="isVisibleSidebar" class="p-3">
 			<CModalHeader>
 				<CModalTitle>Shartnoma yaratish</CModalTitle>
 			</CModalHeader>
@@ -105,7 +93,7 @@
 				<CFormTextarea v-model="formData.description"></CFormTextarea>
 			</div>
 			<CModalFooter>
-				<CButton color="secondary">Yopish</CButton>
+				<CButton color="secondary" @click="isVisibleSidebar = false">Yopish</CButton>
 				<CButton color="primary" @click="submitForm">Saqlash</CButton>
 			</CModalFooter>
 		</CModal>

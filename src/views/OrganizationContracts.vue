@@ -9,12 +9,12 @@
                         <CTable align="middle" class="mb-0 border" hover responsive>
                             <CTableHead color="light">
                                 <CTableRow>
-                                        <template v-for="label in fields" :key="label" >
-                                            <CTableHeaderCell v-if="label.visible">
-                                                {{ label.label }}
-                                            </CTableHeaderCell>
-                                        </template>
-                                        <CTableHeaderCell>Tasdiqlash</CTableHeaderCell>
+                                    <template v-for="label in fields" :key="label">
+                                        <CTableHeaderCell v-if="label.visible">
+                                            {{ label.label }}
+                                        </CTableHeaderCell>
+                                    </template>
+                                    <CTableHeaderCell>Tasdiqlash</CTableHeaderCell>
                                 </CTableRow>
                             </CTableHead>
                             <CTableBody>
@@ -29,6 +29,9 @@
                                         <div>{{ item.contract_date }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>
+                                        <div>{{ item.balance }}</div>
+                                    </CTableDataCell>
+                                    <CTableDataCell>
                                         <div>{{ item.status }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>
@@ -38,7 +41,11 @@
                                         <div>{{ item.subdistribution }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>
-                                        <CButton style="color:white" :disabled="item.status=='Completed'" size="sm" class="btn btn-success" variant="success" @click="verifyStatus(item)"><CIcon icon="cil-check" height="18" alt="true" style="margin-right: 5px;"/>Tasdiqlash</CButton>
+                                        <CButton style="color:white" :disabled="item.status == 'Completed'" size="sm"
+                                            class="btn btn-success" variant="success" @click="verifyStatus(item)">
+                                            <CIcon icon="cil-check" height="18" alt="true" style="margin-right: 5px;" />
+                                            Tasdiqlash
+                                        </CButton>
                                     </CTableDataCell>
                                 </CTableRow>
                             </CTableBody>
@@ -47,31 +54,40 @@
                 </CCard>
             </CCol>
         </CRow>
-        <CModal @close="
-                () => {
-                  isVisibleSidebar = false
-                }
-              " :keyboard="false" :visible="isVisibleSidebar"
-            >
+        <CModal @close="() => {
+                isVisibleSidebar = false
+            }
+                " :keyboard="false" :visible="isVisibleSidebar">
             <CModalHeader>
                 <CModalTitle>Shartnoma yaratish</CModalTitle>
             </CModalHeader>
-            <div v-for="(field, index) in fields" :key="index">
-                <div v-if="field.isAddable" class="mt-3">
-                    <CFormLabel v-if="field.key !== 'type'">{{ field.label }}</CFormLabel>
-                    <CFormSelect v-if="field.key === 'organization'" v-model="formData[field.key]" @click="fetchOrgList">
-                        <option :value="org.id" v-for="org in orgList" :key="org.id">{{ org.title.uz }}</option>
-                    </CFormSelect>
-                    <!-- <CFormSelect  v-else-if="field.key === 'type'" v-model="formData[field.key]">
-                        <option :value="type1.id" v-for="type1 in typeList" :key="type1.id">{{ type1.name }}</option>
-                    </CFormSelect> -->
-                    <input v-else-if="field.key=='contract_date'" type="date" v-model="formData[field.key]" class="d-block">
+            <CModalBody>
+                <div class="d-flex flex-column gap-3">
+                    <div>
+                        <CFormLabel>Korxona</CFormLabel>
+                        <CFormSelect v-model="formData.organization">
+                            <option value="" selected disabled>Tanlang</option>
+                            <option v-for="org in orgList" :key="org.id" :value="org.id">
+                                {{ org.title?.uz }}
+                            </option>
+                        </CFormSelect>
+                    </div>
+                    <div>
+                        <CFormLabel>Sanasi</CFormLabel>
+                        <input type="date" id="" v-model="formData.contract_date" class="form-control">
+                    </div>
+                    <div>
+                        <CFormLabel>Taqsimot</CFormLabel>
+                        <input type="text" id="" v-model="formData.subdistribution" class="form-control" disabled>
+                    </div>
+                    <div>
+                        <CFormLabel>Balance</CFormLabel>
+                        <input type="text" v-model="formData.balance" class="form-control" disabled>
+                    </div>
                 </div>
-            </div>
-            <label for="blns">Balans</label>
-            {{ balanceOrg }}
+            </CModalBody>
             <CModalFooter>
-                <CButton color="secondary">Yopish</CButton>
+                <CButton color="secondary" @click="isVisibleSidebar = false">Yopish</CButton>
                 <CButton color="primary" @click="submitForm">Saqlash</CButton>
             </CModalFooter>
         </CModal>
@@ -81,37 +97,46 @@
 <script>
 import axios from '@/api/axios';
 import { ref, onMounted, computed, watch, reactive } from 'vue'
-import { Organizations,Fonds,OrganizationContracts} from '@/api/schema'
-import {getItem} from '@/helpers/persistanceStorage'
-import { CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea,CModal,CSelect,CMultiSelect, CButton, CTableRow } from "@coreui/vue";
+import { Organizations, Fonds, OrganizationContracts } from '@/api/schema'
+import { getItem } from '@/helpers/persistanceStorage'
+import { CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect, CButton, CTableRow, CModalBody } from "@coreui/vue";
 export default {
     name: 'DashboardPage',
     components: {
-    CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect,
-    CButton,
-    CTableRow
-},
-    onMounted(){
+        CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect,
+        CButton,
+        CTableRow
+    },
+    onMounted() {
 
     },
     setup() {
         let listData = ref([])
         const isVisibleSidebar = ref(false)
         const modalProtocol = ref(null)
-        const orgList = ref([]);
-        
+        const orgList = ref([{ name: '', id: null }]);
+
         const token = getItem('accessToken'); // Replace with your token retrieval logic
         const payloadBase64 = token.split('.')[1];
         const decodedTokenPayload = JSON.parse(window.atob(payloadBase64));
         const currentUserRole = decodedTokenPayload.user_role;
         const currentUser = decodedTokenPayload.username;
         const currentUserId = decodedTokenPayload?.user_id;
-        const selectedDate  = ref('')
+        const selectedDate = ref('')
         const typeList = ref([
+            { name: '', id: 4 },
             { name: 'withdraw', id: 1 },
             { name: 'income', id: 2 },
             { name: 'outgoing', id: 3 },
         ]);
+
+        const formData = reactive({
+            organization: null,
+            contract_date: null,
+            balance: null,
+            subdistribution: null
+        })
+
         // const contractList = ref([]);
         async function getList() {
             listData.value = await OrganizationContracts.list().then(res => res?.data || [])
@@ -130,55 +155,57 @@ export default {
         }
 
         onMounted(() => {
-            getList()
+            getList();
+            fetchOrgList();
+
         })
         const fields = computed(() => {
             return OrganizationContracts?.fields
         })
 
-        const balanceOrg = computed(() => {
-            return orgList.value.filter(t=>t.id == formData['organization'])[0]?.sub_distributions?.balance
-        })
+        // const balanceOrg = computed(() => {
+        //     return orgList.value.find(t => t.id == formData['organization'])?.sub_distributions?.balance
+        // })
 
 
-        const subdistributions = computed(() => {
-            return orgList.value.filter(t => t.id==formData.organization)[0]?.sub_distributions
-        })
+        // // const subdistributions = computed(() => {
+        // //     return orgList.value.find(t => t.id == formData.organization)?.sub_distributions
+        // // })
 
-        const formData = reactive({
-            contract_date: null,
-            organization: null,
-      })
-      const selectedRowData = ref('')
-      function openModal(item) {
-      selectedRowData.value = item;
-    }
-      async function submitForm(){
-        formData.subdistribution= subdistributions.value?.id,
-        formData.balance= subdistributions.value?.balance
-        console.log(formData)
-        try{
-            await OrganizationContracts.create(formData)
-            await getList()
-            isVisibleSidebar.value = false
+        watch(() => formData.organization, (newValue) => {
+            console.log(newValue);
+            formData.subdistribution = orgList.value.find(t => t.id == newValue)?.sub_distributions?.id || '-';
+            formData.balance = orgList.value.find(t => t.id == newValue)?.sub_distributions?.balance ?? '-';
+        }, { immediate: true })
 
-        }catch(e){
-            console.log(e.response?.data)
+
+        const selectedRowData = ref('')
+        function openModal(item) {
+            selectedRowData.value = item;
         }
-      }
-      async function fetchOrgList() {
+        async function submitForm() {
+            try {
+                await OrganizationContracts.create(formData)
+                await getList()
+                isVisibleSidebar.value = false
+
+            } catch (e) {
+                console.log(e.response?.data)
+            }
+        }
+        async function fetchOrgList() {
             orgList.value = await Organizations.list().then(res => res?.data || []);
         }
-    //   async function fetchContractList() {
-    //     contractList.value = await axios.get(`site/contract/list/?fond=${formData.fond}`).then(res=>res.data)
-    //     }
+        //   async function fetchContractList() {
+        //     contractList.value = await axios.get(`site/contract/list/?fond=${formData.fond}`).then(res=>res.data)
+        //     }
         // watch(()=>formData.fond,()=>{
         //     fetchContractList()
         // })
-        
-        async function verifyStatus(dt){
+
+        async function verifyStatus(dt) {
             console.log(dt)
-            await axios.put(`admin/contract/org-contract/update/${dt.id}/`,{
+            await axios.put(`admin/contract/org-contract/update/${dt.id}/`, {
                 status: 'Completed'
             })
             getList()
@@ -202,15 +229,14 @@ export default {
             currentUserRole,
             selectedDate,
             typeList,
-            balanceOrg
+            // balanceOrg
         }
     },
 }
 </script>
 
 <style>
-.modal-content{
+.modal-content {
     padding: 25px;
 }
 </style>
-  
