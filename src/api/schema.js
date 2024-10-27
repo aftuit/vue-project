@@ -428,7 +428,7 @@ export const ProtocolInfo = new APINode(
 		{
 			visible: true,
 			key: "inn",
-			label: "Mijoz",
+			label: "Mijoz INN",
 		},
 		{
 			visible: true,

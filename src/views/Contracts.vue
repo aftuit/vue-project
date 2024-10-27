@@ -12,6 +12,7 @@
 									<CTableHeaderCell v-for="label in fields" :key="label">{{
 				label.label
 			}}</CTableHeaderCell>
+									<CTableHeaderCell>Tasdiqlash</CTableHeaderCell>
 								</CTableRow>
 							</CTableHead>
 							<CTableBody>
@@ -52,6 +53,13 @@
 									<CTableDataCell>
 										<div>{{ item.profit }}</div>
 									</CTableDataCell>
+									<CTableDataCell>
+										<CButton style="color:white" :disabled="item.status == 'Completed'" size="sm"
+											class="btn btn-success" variant="success">
+											<CIcon icon="cil-check" height="18" alt="true" style="margin-right: 5px;" />
+											Tasdiqlash
+										</CButton>
+									</CTableDataCell>
 								</CTableRow>
 								<CTableRow> </CTableRow>
 							</CTableBody>
@@ -61,8 +69,8 @@
 			</CCol>
 		</CRow>
 		<CModal @close="() => {
-					isVisibleSidebar = false
-				}
+				isVisibleSidebar = false
+			}
 				" :keyboard="false" :visible="isVisibleSidebar" class="p-3">
 			<CModalHeader>
 				<CModalTitle>Shartnoma yaratish</CModalTitle>
@@ -183,6 +191,13 @@ export default {
 				console.log(e.response?.data)
 			}
 		}
+		async function verifyStatus(dt) {
+            console.log(dt)
+            await axios.put(`admin/contract/update/${dt.id}/`, {
+                status: 'Completed'
+            })
+            getList()
+        }
 		return {
 			listData,
 			fields,
@@ -193,6 +208,7 @@ export default {
 			fondList,
 			fetchFondList,
 			submitForm,
+			verifyStatus
 		}
 	},
 }
