@@ -174,9 +174,9 @@ export default {
 			{ name: 'EUR', val: 'eur', id: 4 },
 		])
 		const contract_typeList = ref([
-			{ name: 'Investment', val: 'INVESTMENT' },
-			{ name: 'Dividend', val: 'DIVIDEND' },
-			{ name: 'Withdraw', val: 'WITHDRAW' }
+			{ name: 'Investment', val: 'Investment' },
+			{ name: 'Dividend', val: 'Dividend' },
+			{ name: 'Withdraw', val: 'Withdraw' }
 		])
 
 		onMounted(() => {
