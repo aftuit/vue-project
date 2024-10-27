@@ -105,7 +105,8 @@
 				<CFormInput type="number" v-model="formData.balance" />
 				<br />
 				<CFormLabel>Fond</CFormLabel>
-				<CFormSelect v-model="formData.fond" @click="fetchFondList">
+				<CFormSelect v-model="formData.fond">
+					<option value="" selected disabled>Tanlang</option>
 					<option :value="fond.id" v-for="fond in fondList" :key="fond.id">
 						{{ fond.title?.uz }} {{ fond.id }}
 					</option>
@@ -180,7 +181,8 @@ export default {
 		])
 
 		onMounted(() => {
-			getList()
+			getList();
+			fetchFondList();
 		})
 		async function getList() {
 			listData.value = await Contracts.list().then(res => res.data);
@@ -196,16 +198,17 @@ export default {
 		// async function getList() {
 		// 	listData.value = await OrganizationContracts.list().then(res => res?.data || [])
 		// }
-		async function fetchFondList(id) {
+		async function fetchFondList(evt) {
 			fondList.value = await Fonds.list().then(res => res?.data || [])
-			let element = id.target
-			if (element.value) {
-				formData.fond = element.value
-			}
+			// let element = evt.target
+			// if (element.value) {
+			// 	formData.fond = element.value
+			// }
 		}
 		async function submitForm() {
 			try {
-				await axios.post(`admin/contract/create/`, formData)
+				await axios.post(`admin/contract/create/`, formData);
+				getList();
 				isVisibleSidebar.value = false
 			} catch (e) {
 				console.log(e.response?.data)

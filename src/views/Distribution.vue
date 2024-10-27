@@ -1,52 +1,79 @@
 <template>
     <div>
         <h3 class="w-100 mb-2">Taqsimot</h3>
-        <div class="form-group col-12 d-flex mb-5">
-            <div class="col-3">
-                <label for="fond-list1">Protokol tanlang:</label>
-                <select class="form-select" id="fond-list1" v-model="selectedProtocol">
-                    <option :value="protocol" v-for="protocol in protocolList" :key="protocol.id">protocol: {{
-                    protocol.id
-                }}</option>
-                </select>
+        <div class="form-group row">
+            <div class="col-6">
+                <div>
+                    <!-- <label for="fond-list1">Protokol tanlang:</label> -->
+                    <select class="form-select" id="fond-list1" v-model="selectedProtocol">
+                        <option :value="null" selected disabled>Protokol tanlang</option>
+                        <option :value="protocol" v-for="protocol in protocolList" :key="protocol.id">protocol: {{
+                        protocol.id
+                    }}</option>
+                    </select>
+                </div>
+                <div class="mt-2 bg-white">
+                    <CCard>
+                        <CCardBody>
+                            <table class="table table-striped">
+                                <!-- <tr v-for="key of Object.keys(selectedProtocol || {})" :key="key">
+                                    <td class="px-2 py-2">{{ key }}</td>
+                                    <td class="ps-3">{{
+                        key === 'user' ? selectedProtocol[key]?.get_full_name :
+                            key === 'fond' ? selectedProtocol[key]?.title?.uz :
+                                selectedProtocol[key] }}</td>
+                                </tr> -->
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Korxona</th>
+                                        <th>Taqsimot</th>
+                                        <th>Balansi</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr v-if="subDistList?.length < 1">
+                                        <td colspan="5" class="py-3 text-muted text-center">
+                                            <div v-if="subDistLoading" class="spinner-border text-secondary"
+                                                role="status">
+                                                <span class="sr-only"></span>
+                                            </div>
+                                            <span v-else> Ma'lumot yo'q</span>
+                                        </td>
+                                    </tr>
+                                    <template v-else>
+                                        <tr v-for="item in subDistList" :key="item.id">
+                                            <td>{{ item.id }}</td>
+                                            <td>{{ item.organization?.uz }}</td>
+                                            <td>{{ item.distribution }}</td>
+                                            <td>{{ item.balance }}</td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </CCardBody>
+                    </CCard>
+                </div>
             </div>
-            <ul class="p-0 m-0 d-flex flex-row col-9 justify-content-around list-unstyled align-items-end"
-                v-if="selectedProtocol">
-                <li v-for="key of Object.keys(selectedProtocol || {})" :key="key"
-                    class="d-block mr-2 border-1 border-secondary cil-border-all p-1 solid">
-                    <CBadge color="info" style="font-size: 13px;" shape="rounded-pill">{{ key }}: {{
-                        key === 'user'? selectedProtocol[key]?.get_full_name:
-                        key === 'fond' ? selectedProtocol[key]?.title?.uz:
-                    selectedProtocol[key] }}
-                    </CBadge>
-                </li>
-            </ul>
-        </div>
-        <div class="w-100 d-flex flex-row justify-content-end mb-2"
-            v-if="Object.keys(selectedProtocol || {}).length > 0">
-            <CButton class="text-white" size="sm" color="info" style="width: 130px;" @click="isVisibleTable = true">
-                Shakllantirish
-            </CButton>
-            <CButton class="text-white" size="sm" color="success"
-                style="margin-left: 10px;margin-right: 10px;min-width: 130px;" @click="distributeProfit">Foydani
-                taqsimlash</CButton>
-            <CInputGroup style="width: 200px;">
-                <CFormInput style="width: 100px;" v-model.number="insertedProfit" type="number" />
-                <CButton type="button" size="sm" color="secondary" id="button-addon2" @click="addNewRow()">
-                    <CIcon icon="cil-plus" height="16" alt="true" />
-                </CButton>
-            </CInputGroup>
-        </div>
-        <CRow v-show="isVisibleTable">
-            <CCol :md="12">
-                <CCard class="mb-4">
-                    <!-- <CCardHeader>
-                        <div class="d-flex justify-content-end">
-                            <CButton class="btn btn-success text-white" @click="addNewRow()">
-                                <CIcon icon="cil-plus" class="text-white" height="16" /> Qo'shish
+            <div class="col-6">
+                <CCard v-if="selectedProtocol">
+                    <CCardHeader>
+                        <div class="w-100 d-flex flex-row gap-2 justify-content-end"
+                            v-if="Object.keys(selectedProtocol || {}).length > 0 || true">
+                            <CButton class="text-white" size="sm" color="info" style="width: 130px;"
+                                @click="isVisibleTable = true">
+                                Shakllantirish
+                            </CButton>
+                            <CButton class="text-white" size="sm" color="success" @click="distributeProfit">Foydani
+                                taqsimlash</CButton>
+                            <!-- <CInputGroup style="width: 200px;">
+                                <CFormInput style="width: 100px;" v-model.number="insertedProfit" type="number" />
+                            </CInputGroup> -->
+                            <CButton type="button" size="sm" color="primary" id="button-addon2" @click="addNewRow()">
+                                Qo'shish
                             </CButton>
                         </div>
-                    </CCardHeader> -->
+                    </CCardHeader>
                     <CCardBody>
                         <table class="table table-striped">
                             <thead>
@@ -59,17 +86,18 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <!-- Your table rows go here -->
                                 <tr>
-                                    <td style="font-weight: 600;">{{ fondData ? fondData.title?.uz : '' }}</td>
-                                    <td style="font-weight: 600;">{{ fondData ? fondData.title?.uz : '' }}</td>
-                                    <td style="font-weight: 600;"
+                                    <td>{{ fondData ? fondData.title?.uz : ''
+                                        }}</td>
+                                    <td>{{ fondData ? fondData.title?.uz : ''
+                                        }}</td>
+                                    <td
                                         :style="{ color: (fondData ? (fondData.fond_balance - distrAmount) : 0) <= 0 ? 'red' : '' }">
                                         {{ fondData ? fondData.fond_balance - distrAmount : '' }}
                                         <span v-show="(fondData ? fondData.fond_balance - distrAmount : 0) < 0">Balans
                                             yetmaydi</span>
                                     </td>
-                                    <td style="font-weight: 600;">{{ fondPercent }}</td>
+                                    <td>{{ fondPercent }}</td>
                                     <td></td>
 
                                 </tr>
@@ -91,24 +119,29 @@
                                             <option :value="fond" v-for="fond in subdistriborg" :key="fond.id">
                                                 {{ fond.title?.uz }}
                                             </option>
-                                        </select></td>
+                                        </select>
+                                    </td>
                                     <td>{{ fondData ? fondData.title?.uz : '' }}</td>
-                                    <td><input type="number" :disabled="!selectedOrganizations?.id"
+                                    <td>
+                                        <input type="number" :disabled="!selectedOrganizations?.id" class="form-control"
                                             v-model="distrAmount"
                                             :style="{ border: '2px solid' + fondData?.fond_balance < distrAmount ? 'red' : '' }">
                                     </td>
-                                    <td>{{ organizationPercent }}</td>
+                                    <td>{{ organizationPercent?.toFixed(2) }}</td>
                                     <td>
                                     </td>
                                 </tr>
                             </tbody>
                             <CButton color="info" class="mt-2 text-white" size="sm" style="width: 130px;right: 0;"
-                                @click.prevent="createDistribution">Submit</CButton>
+                                @click.prevent="createDistribution">
+                                Submit
+                            </CButton>
                         </table>
                     </CCardBody>
                 </CCard>
-            </CCol>
-        </CRow>
+
+            </div>
+        </div>
     </div>
 </template>
 
@@ -116,8 +149,8 @@
 import { ref, onMounted, computed, watch, reactive } from 'vue'
 import { Protocols, Organizations, Distribution, SubDistribution, Fonds } from '@/api/schema'
 import { getItem } from '@/helpers/persistanceStorage'
-import { CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect, CRow, CCard, CButton, CInputGroupText } from "@coreui/vue";
-import { useRouter, useRoute } from 'vue-router'
+import { CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect, CRow, CCard, CButton, CInputGroupText, CCardBody } from "@coreui/vue";
+import { useRouter, useRoute } from 'vue-router';
 export default {
     name: 'DashboardPage',
     components: {
@@ -134,12 +167,15 @@ export default {
         const organizationList = ref([]);
         const selectedOrganizations = ref([])
         const selectedFond = ref([])
-        const selectedProtocol = ref()
+        const selectedProtocol = ref(null)
         const isOrganizationSelect = ref(false)
         const subdistrib = ref(null)
+        const subDistList = ref([]);
         const distrAmount = ref(0)
+        const tableData = ref([])
         const subdistriborg = ref(null)
         const isVisibleTable = ref(false)
+        const subDistLoading = ref(false)
         const typeList = ref([
             { name: 'withdraw' },
             { name: 'income' },
@@ -152,9 +188,10 @@ export default {
             return Object.values(balances).reduce((acc, cur) => acc + cur, 0)
         })
         onMounted(() => {
-            fetchOrganizationList()
-            fetchFondList()
-            fetchProtocolList()
+            fetchOrganizationList();
+            fetchFondList();
+            fetchProtocolList();
+            // getSubDistributions();
         })
         const formData = reactive({
             balance: null,
@@ -209,9 +246,9 @@ export default {
                 subdistributions: selectedOrgWithBalance,
                 fond: fondData.value?.id,
             })
-            router.push('/distributions')
+            getSubDistributions(selectedProtocol.id, selectedProtocol.fond?.id)
+            // router.push('/distributions')
         }
-        const tableData = ref([])
 
         function addNewRow() {
             // Create a new row object with default 
@@ -242,8 +279,12 @@ export default {
         })
         watch(distrAmount, () => {
             tableData.value.map(t => {
-                t.percent = Number(t.sum) * 100 / saveFondBalance
+                t.percent = (Number(t.sum) * 100 / saveFondBalance)?.toFixed(2)
             })
+        })
+
+        watch(selectedProtocol, (newVal) => {
+            getSubDistributions(newVal.id, newVal.fond?.id)
         })
 
         function removeData(data) {
@@ -256,8 +297,15 @@ export default {
         async function distributeProfit() {
 
         }
+
+        async function getSubDistributions(protocol, fond) {
+            subDistLoading.value = true;
+            subDistList.value = await SubDistribution.list({ protocol, fond }).then(res => res.data || []).finally(() => subDistLoading.value = false);
+        }
+
         return {
             selectedProtocol,
+            subDistLoading,
             insertedProfit,
             organizationPercent,
             fondPercent,
@@ -279,6 +327,7 @@ export default {
             selectedFond,
             subdistriborg,
             protocolList,
+            subDistList,
             distributeProfit,
             submitForm,
             fetchFondList,
@@ -286,7 +335,8 @@ export default {
             createDistribution,
             fetchProtocolList,
             addNewRow,
-            removeData
+            removeData,
+            getSubDistributions
         }
     },
 }
