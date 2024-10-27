@@ -2,7 +2,7 @@
 import Vue from 'vue'
 import { reactive } from 'vue'
 import axios from './axios'
-import { globalErrors } from "./lib";
+import { globalErrors } from './lib'
 
 export let Permissions = {}
 
@@ -47,7 +47,6 @@ export class APIMethod {
 			//     globalErrors.value.push(e.response.data.non_field_errors)
 			console.log(e)
 		} else {
-
 			//   Vue.$toast({
 			//     component: ToastificationContent,
 			//     props: {
@@ -68,10 +67,7 @@ export class APIMethod {
 		}
 		try {
 			var method = this.method.toLowerCase()
-			var req = await axios[method](
-				this.path.replace(':' + this.id, id),
-				method == 'get' ? { params } : params,
-			)
+			var req = await axios[method](this.path.replace(':' + this.id, id), method == 'get' ? { params } : params)
 			return req
 		} catch (e) {
 			this.errorHandler(e)
@@ -93,24 +89,22 @@ export class APINode {
 			},
 			flags,
 		)
-		fields.forEach((field) => {
+		fields.forEach(field => {
 			if (field.filter == 'option') {
 				field.idField = field.idField || 'id'
 				field.valueField = field.valueField || 'title'
 			}
 		})
 		this.fields = fields
-		methods.forEach((endpoint) => {
+		methods.forEach(endpoint => {
 			this['_' + endpoint.type] = endpoint
 			if (endpoint.id) this.idKey = endpoint.id
 		})
 		if (this._list && flags.listable === undefined) this.flags.listable = true
-		if (this._delete && flags.deletable === undefined)
-			this.flags.deletable = true
+		if (this._delete && flags.deletable === undefined) this.flags.deletable = true
 		if (this._patch && flags.editable === undefined) this.flags.editable = true
 		if (this._create && flags.addable === undefined) this.flags.addable = true
-		if (this._toggle && flags.toggleable === undefined)
-			this.flags.toggleable = true
+		if (this._toggle && flags.toggleable === undefined) this.flags.toggleable = true
 	}
 
 	data = reactive({
@@ -145,9 +139,7 @@ export class APINode {
 			if (this.flags.paginated) {
 				if (req.data.count !== undefined) {
 					this.data.items = req.data.results
-					this.data.pagination.from = req.data.count
-						? req.data.page_size * (req.data.page_number - 1) + 1
-						: 0
+					this.data.pagination.from = req.data.count ? req.data.page_size * (req.data.page_number - 1) + 1 : 0
 					this.data.pagination.to = Math.min(
 						req.data.page_size * req.data.page_number,
 						req.data.results.length,
@@ -157,10 +149,7 @@ export class APINode {
 				} else {
 					this.data.items = req.data.items
 					this.data.pagination.from = req.data.size * (req.data.page - 1) + 1
-					this.data.pagination.to = Math.min(
-						req.data.size * req.data.page,
-						req.data.items?.length,
-					)
+					this.data.pagination.to = Math.min(req.data.size * req.data.page, req.data.items?.length)
 					this.data.pagination.of = req.data.total
 					this.data.pagination.per = req.data.size
 				}
@@ -234,309 +223,340 @@ export function permission(method) {
 }
 
 export const Contracts = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/list/" })],
+	[new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/list/' })],
 	{ paginated: true },
 	[
 		{
 			visible: true,
-			key: "id",
-			label: "ID",
+			key: 'id',
+			label: 'ID',
 		},
 		{
 			visible: true,
-			key: "title",
-			label: "Nomi",
+			key: 'title',
+			label: 'Nomi',
 		},
 		{
 			visible: true,
-			key: "investor",
-			label: "investor",
+			key: 'investor',
+			label: 'Investor',
 		},
 		{
 			visible: true,
-			key: "fond",
-			label: "fond",
+			key: 'fond',
+			label: 'Fond',
 		},
 		{
 			visible: false,
-			key: "condition",
-			label: "holati",
+			key: 'condition',
+			label: 'Holati',
 		},
 		{
 			visible: true,
-			key: "balance",
-			label: "balans",
+			key: 'balance',
+			label: 'Balans',
 		},
 		{
 			visible: true,
-			key: "payment_currency",
-			label: "valyuta",
+			key: 'payment_currency',
+			label: 'Valyuta',
 		},
 		{
 			visible: true,
-			key: "description",
-			label: "ma'lumot"
+			key: 'description',
+			label: "Ma'lumot",
 		},
 		{
 			visible: true,
-			key: "status",
-			label: "status",
+			key: 'status',
+			label: 'Status',
 		},
 		{
 			visible: true,
-			key: "contract_type",
-			label: "shartnoma turi",
+			key: 'contract_type',
+			label: 'Shartnoma turi',
 			sortable: true,
 		},
 		{
 			visible: true,
-			key: "percentage",
-			label: "foiz",
+			key: 'percentage',
+			label: 'Foiz',
 		},
 		{
 			visible: true,
-			key: "profit",
-			label: "foyda",
+			key: 'profit',
+			label: 'Foyda',
 		},
-	]
-);
+	],
+)
+export const Customers = new APINode(
+	[new APIMethod({ type: 'list', method: 'GET', path: 'admin/account/list/' })],
+	{ paginated: true },
+	[
+		{
+			visible: true,
+			key: 'id',
+			label: 'ID',
+		},
+		{
+			visible: true,
+			key: 'investor',
+			label: 'Investor',
+		},
+		{
+			visible: true,
+			key: 'address',
+			label: 'Manzili',
+		},
+		{
+			visible: false,
+			key: 'inn',
+			label: 'INN',
+		},
+	],
+)
 
 export const OrganizationContracts = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/org-contract/list/" }),
-	new APIMethod({ type: "create", method: "POST", path: "admin/contract/org-contract/create/" })],
+	[
+		new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/org-contract/list/' }),
+		new APIMethod({ type: 'create', method: 'POST', path: 'admin/contract/org-contract/create/' }),
+	],
 	{ paginated: true },
 	[
 		{
 			visible: true,
 			isAddable: false,
-			key: "id",
-			label: "ID",
+			key: 'id',
+			label: 'ID',
 		},
 		{
 			visible: true,
 			isAddable: true,
-			key: "organization",
-			label: "Korxona",
+			key: 'organization',
+			label: 'Korxona',
 		},
 		{
 			visible: true,
 			isAddable: true,
-			key: "contract_date",
-			label: "Sanasi",
+			key: 'contract_date',
+			label: 'Sanasi',
 		},
 		{
 			visible: true,
 			isAddable: true,
-			key: "balance",
-			label: "Balansi",
+			key: 'balance',
+			label: 'Balansi',
 		},
 		{
 			visible: true,
 			isAddable: false,
-			key: "status",
-			label: "status",
+			key: 'status',
+			label: 'Status',
 		},
 		{
 			visible: true,
 			isAddable: true,
-			key: "type",
-			label: "type",
+			key: 'type',
+			label: 'Type',
 		},
 		{
 			visible: true,
 			isAddable: false,
-			key: "subdistribution",
-			label: "Taqsimot",
+			key: 'subdistribution',
+			label: 'Taqsimot',
 			sortable: true,
 		},
-	]
-);
+	],
+)
 
 export const Fonds = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/fond/list/" })],
+	[new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/fond/list/' })],
 	{ paginated: true },
 	[
 		{
 			visible: true,
-			key: "id",
-			label: "ID",
+			key: 'id',
+			label: 'ID',
 		},
 		{
 			visible: true,
-			key: "title",
-			label: "Nomi",
+			key: 'title',
+			label: 'Nomi',
 		},
 		{
 			visible: true,
-			key: "description",
-			label: "tarif",
+			key: 'description',
+			label: 'Tarif',
 		},
 		{
 			visible: false,
-			key: "old_balance",
-			label: "eski balans",
+			key: 'old_balance',
+			label: 'Eski balans',
 		},
 		{
 			visible: true,
-			key: "fond_balance",
-			label: "fondning balansi",
+			key: 'fond_balance',
+			label: 'Fondning balansi',
 		},
 		{
 			visible: true,
-			key: "status",
-			label: "status",
+			key: 'status',
+			label: 'Status',
 		},
 		{
 			visible: true,
-			key: "created",
-			label: "yaratilgan"
+			key: 'created',
+			label: 'Yaratilgan',
 		},
 		{
 			visible: true,
-			key: "start_date",
-			label: "boshlash sanasi",
+			key: 'start_date',
+			label: 'Boshlash sanasi',
 		},
 		{
 			visible: true,
-			key: "end_date",
-			label: "tugatish sanasi",
+			key: 'end_date',
+			label: 'Tugatish sanasi',
 			sortable: true,
 		},
-	]
-);
+	],
+)
 
-export const Distribution = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/distribution/list/" }),
-	new APIMethod({ type: "create", method: "POST", path: "admin/contract/distribution/create/" }),])
-export const SubDistribution = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/sub-distribution/list/" })])
+export const Distribution = new APINode([
+	new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/distribution/list/' }),
+	new APIMethod({ type: 'create', method: 'POST', path: 'admin/contract/distribution/create/' }),
+])
+export const SubDistribution = new APINode([
+	new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/sub-distribution/list/' }),
+])
 
 export const ProtocolInfo = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/protocol/detail/:id" })],
+	[new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/protocol/detail/:id' })],
 	{ paginated: true },
 	[
 		{
 			visible: true,
-			key: "id",
-			label: "ID",
+			key: 'id',
+			label: 'ID',
 		},
 		{
 			visible: true,
-			key: "inn",
-			label: "Mijoz INN",
+			key: 'inn',
+			label: 'Mijoz INN',
 		},
 		{
 			visible: true,
-			key: "contract_total_balance",
-			label: "Summa",
+			key: 'contract_total_balance',
+			label: 'Summa',
 		},
 		{
 			visible: true,
-			key: "balance",
-			label: "balans",
+			key: 'balance',
+			label: 'Balans',
 		},
 		{
 			visible: true,
-			key: "percentage",
-			label: "Ulush",
+			key: 'percentage',
+			label: 'Ulush',
 		},
 		{
 			visible: true,
-			key: "initial_balance",
-			label: "dastlabki sarmoya",
+			key: 'initial_balance',
+			label: 'Dastlabki sarmoya',
 		},
 		{
 			visible: true,
-			key: "withdraw",
-			label: "Yechib olish"
+			key: 'withdraw',
+			label: 'Yechib olish',
 		},
 		{
 			visible: true,
-			key: "client_balance",
-			label: "Dvidend olish huquqi",
+			key: 'client_balance',
+			label: 'Dvidend olish huquqi',
 		},
 		{
 			visible: true,
-			key: "old_percentage",
-			label: "ulush",
+			key: 'old_percentage',
+			label: 'Ulush',
 		},
 		{
 			visible: true,
-			key: "dividend",
-			label: "Dvidend",
+			key: 'dividend',
+			label: 'Dvidend',
 		},
 		{
 			visible: true,
-			key: "investment",
-			label: "Sarmoya kiritish(oldingi oy)",
+			key: 'investment',
+			label: 'Sarmoya kiritish(oldingi oy)',
 		},
-	]
-);
+	],
+)
 
 export const Protocols = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/protocol/list/" }),
-	new APIMethod({ type: "create", method: "POST", path: "admin/contract/protocol/create/" })],
+	[
+		new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/protocol/list/' }),
+		new APIMethod({ type: 'create', method: 'POST', path: 'admin/contract/protocol/create/' }),
+	],
 	{ paginated: true },
 	[
 		{
 			visible: true,
-			key: "id",
-			label: "ID",
+			key: 'id',
+			label: 'ID',
 		},
 		{
 			visible: true,
-			key: "user",
-			label: "foydalanuvchi",
+			key: 'user',
+			label: 'Foydalanuvchi',
 		},
 		{
 			visible: true,
-			key: "fond",
-			label: "Fond",
+			key: 'fond',
+			label: 'Fond',
 		},
 		{
 			visible: false,
-			key: "contract",
-			label: "shartnoma",
+			key: 'contract',
+			label: 'Shartnoma',
 		},
 		{
 			visible: false,
-			key: "status",
-			label: "status",
+			key: 'status',
+			label: 'Status',
 		},
 		{
 			visible: true,
-			key: "balance",
-			label: "balans",
+			key: 'balance',
+			label: 'Balans',
 		},
 		{
 			visible: true,
-			key: "status",
-			label: "Status",
+			key: 'status',
+			label: 'Status',
 		},
 		{
 			visible: true,
-			key: "profit",
-			label: "foyda",
+			key: 'profit',
+			label: 'Foyda',
 		},
 		{
 			visible: true,
-			key: "percentage",
-			label: "foiz",
+			key: 'percentage',
+			label: 'Foiz',
 		},
 		{
 			visible: true,
-			key: "description",
-			label: "ma'lumot"
+			key: 'description',
+			label: "Ma'lumot",
 		},
 		{
 			visible: true,
-			key: "more",
-			label: "Harakat",
+			key: 'more',
+			label: 'Harakat',
 		},
-	]
-);
+	],
+)
 
-export const Organizations = new APINode(
-	[new APIMethod({ type: "list", method: "GET", path: "admin/contract/organization/list/" })])
-
-
+export const Organizations = new APINode([
+	new APIMethod({ type: 'list', method: 'GET', path: 'admin/contract/organization/list/' }),
+])

@@ -15,9 +15,6 @@
 
                                     </template>
                                     <CTableHeaderCell>
-                                        Taqsimot
-                                    </CTableHeaderCell>
-                                    <CTableHeaderCell>
                                         Harakat
                                     </CTableHeaderCell>
                                 </CTableRow>
@@ -29,9 +26,6 @@
                                     </CTableDataCell>
                                     <CTableDataCell>
                                         <div>{{ item.title.uz }}</div>
-                                    </CTableDataCell>
-                                    <CTableDataCell>
-                                        <div>{{ item.reason.uz }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>
                                         <div>{{ item.description.uz }}</div>

@@ -24,10 +24,10 @@
 										<div>{{ item.title }}</div>
 									</CTableDataCell>
 									<CTableDataCell>
-										<div>{{ item.investor }}</div>
+										<div>{{ item.investor?.get_full_name }}</div>
 									</CTableDataCell>
 									<CTableDataCell>
-										<div>{{ item.fond }}</div>
+										<div>{{ item.fond?.uz }}</div>
 									</CTableDataCell>
 									<CTableDataCell>
 										<div>{{ item.condition }}</div>

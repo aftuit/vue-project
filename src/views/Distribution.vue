@@ -1,8 +1,6 @@
 <template>
     <div>
         <h3 class="w-100 mb-2">Taqsimot</h3>
-
-
         <div class="form-group col-12 d-flex mb-5">
             <div class="col-3">
                 <label for="fond-list1">Protokol tanlang:</label>
@@ -32,21 +30,21 @@
                 taqsimlash</CButton>
             <CInputGroup style="width: 200px;">
                 <CFormInput style="width: 100px;" v-model.number="insertedProfit" type="number" />
-                <CButton type="button" size="sm" color="secondary" id="button-addon2">
-                    <CIcon icon="cil-plus" height="16" alt="true" @click="addProfit" />
+                <CButton type="button" size="sm" color="secondary" id="button-addon2" @click="addNewRow()">
+                    <CIcon icon="cil-plus" height="16" alt="true" />
                 </CButton>
             </CInputGroup>
         </div>
         <CRow v-show="isVisibleTable">
             <CCol :md="12">
                 <CCard class="mb-4">
-                    <CCardHeader>
+                    <!-- <CCardHeader>
                         <div class="d-flex justify-content-end">
                             <CButton class="btn btn-success text-white" @click="addNewRow()">
                                 <CIcon icon="cil-plus" class="text-white" height="16" /> Qo'shish
                             </CButton>
                         </div>
-                    </CCardHeader>
+                    </CCardHeader> -->
                     <CCardBody>
                         <table class="table table-striped">
                             <thead>
@@ -80,7 +78,7 @@
                                     <td>{{ data.percent }}</td>
                                     <td>
                                         <CButton v-c-tooltip="{ content: `O'chirish`, placement: 'top' }" size="sm"
-                                            class="btn btn-danger text-white" @click="removeData(data.unique_id)">
+                                            class="btn btn-danger text-white" @click="removeData(data)">
                                             <CIcon icon="cil-x-circle" height="18" />
                                         </CButton>
                                     </td>
@@ -109,7 +107,6 @@
                 </CCard>
             </CCol>
         </CRow>
-
     </div>
 </template>
 
@@ -119,8 +116,6 @@ import { Protocols, Organizations, Distribution, SubDistribution, Fonds } from '
 import { getItem } from '@/helpers/persistanceStorage'
 import { CInputGroup, CFormInput, CFormLabel, CFormSelect, CFormTextarea, CModal, CSelect, CMultiSelect, CRow, CCard, CButton, CInputGroupText } from "@coreui/vue";
 import { useRouter, useRoute } from 'vue-router'
-import CIcon from '@coreui/icons-vue';
-import { cilTrash } from '@coreui/icons';
 export default {
     name: 'DashboardPage',
     components: {
@@ -214,11 +209,7 @@ export default {
             })
             router.push('/distributions')
         }
-        const tableData = ref([
-            // Your data goes here, e.g., an array of objects
-            // { factory: fondData.value?.title?.uz, fond: fondData.value?.title?.uz, sum: fondData.value?.fond_balance, percent: 100 },
-            // Add more rows as needed
-        ])
+        const tableData = ref([])
 
         function addNewRow() {
             // Create a new row object with default 
@@ -250,13 +241,13 @@ export default {
         watch(distrAmount, () => {
             tableData.value.map(t => {
                 t.percent = Number(t.sum) * 100 / saveFondBalance
-                // t.percent = Number(t.sum) * 100
             })
         })
 
-        function removeData(id) {
-            if (id == null) return; // Ensure id is valid
-            tableData.value = tableData.value.filter(t => t.unique_id != id)
+        function removeData(data) {
+            if (data == null) return; // Ensure id is valid
+            tableData.value = tableData.value.filter(t => t.unique_id != data.unique_id);
+            fondData.value.fond_balance = +fondData.value.fond_balance + data.sum;
         }
 
         const insertedProfit = ref(0)
@@ -298,6 +289,3 @@ export default {
     },
 }
 </script>
-
-
-<style lang="scss"></style>

@@ -8,8 +8,8 @@
 							<CTableHead color="light">
 								<CTableRow>
 									<CTableHeaderCell v-for="label in fields" :key="label">{{
-										label.label
-									}}</CTableHeaderCell>
+				label.label
+			}}</CTableHeaderCell>
 								</CTableRow>
 							</CTableHead>
 							<CTableBody>
@@ -18,37 +18,13 @@
 										<div>{{ item.id }}</div>
 									</CTableDataCell>
 									<CTableDataCell>
-										<div>{{ item.title }}</div>
+										<div>{{ item.user?.get_full_name }}</div>
 									</CTableDataCell>
 									<CTableDataCell>
-										<div>{{ item.investor }}</div>
+										<div>{{ item.address }}</div>
 									</CTableDataCell>
 									<CTableDataCell>
-										<div>{{ item.fond }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.condition }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.balance }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.payment_currency }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.description.uz }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.status }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.contract_type }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.percentage }}</div>
-									</CTableDataCell>
-									<CTableDataCell>
-										<div>{{ item.profit }}</div>
+										<div>{{ item.inn }}</div>
 									</CTableDataCell>
 								</CTableRow>
 								<CTableRow> </CTableRow>
@@ -63,23 +39,21 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue'
-import { Contracts } from '@/api/schema'
+import { Customers } from '@/api/schema'
 export default {
 	name: 'DashboardPage',
 	components: {},
 	setup() {
 		let listData = ref([])
 		async function getList() {
-			listData.value = await Contracts.list().then(res => res.data)
+			listData.value = await Customers.list().then(res => res.data)
 		}
-
 		onMounted(() => {
 			getList()
 		})
 		const fields = computed(() => {
-			return Contracts?.fields
+			return Customers?.fields
 		})
-		console.log(listData, Contracts)
 		return {
 			listData,
 			fields,

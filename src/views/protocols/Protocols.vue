@@ -22,13 +22,13 @@
                                         <div>{{ item.id }}</div>
                                     </CTableDataCell>
                                     <CTableDataCell>
-                                        <div>{{ item.user }}</div>
+                                        <div>{{ item.user.get_full_name }}</div>
                                     </CTableDataCell>
                                     <!-- <CTableDataCell>
                                         <div>{{ item.contract }}</div>
                                     </CTableDataCell> -->
                                     <CTableDataCell>
-                                        <div>{{ item.fond }}</div>
+                                        <div>{{ item.fond.title.uz }}</div>
                                     </CTableDataCell>
                                     <!-- <CTableDataCell>
                                         <div>{{ item.status }}</div>
@@ -50,16 +50,6 @@
                                     </CTableDataCell>
                                     <CTableDataCell>
                                         <div>
-                                            <!-- <router-link
-                                                :to="{
-                                                    name: 'ProtocolInfo',
-                                                    params: { id:item.id },
-                                                }"
-                                                target="_blank"
-                                                style="text-decoration: none;"
-                                                >
-                                                    Batafsil
-                                            </router-link> -->
                                             <CButton v-c-tooltip="{ content: `Batafsil ko'rish`, placement: 'top' }"
                                                 color="info" size="sm" class="text-white"
                                                 @click="viewDistribution(item)">
@@ -75,8 +65,8 @@
             </CCol>
         </CRow>
         <CModal @close="() => {
-                    isVisibleSidebar = false
-                }
+                isVisibleSidebar = false
+            }
                 " :keyboard="false" :visible="isVisibleSidebar">
             <CModalHeader>
                 <CModalTitle>Protokol yaratish</CModalTitle>
@@ -93,7 +83,7 @@
                             :aria-label="field.label" v-model="formData[field.key]" />
                         <CFormTextarea v-else :placeholder="'Enter Description'" v-model="formData[field.key]" />
                     </CInputGroup>
-                    <CFormSelect v-else-if="field.key === 'fond'" v-model="formData[field.key]" @click="fetchFondList">
+                    <CFormSelect v-else-if="field.key === 'fond'" v-model="formData[field.key]">
                         <option :value="fond.id" v-for="fond in fondList" :key="fond.id">{{ fond.title.uz }}</option>
                     </CFormSelect>
                     <!-- <CFormSelect multiple v-else-if="field.key === 'contract'" v-model="formData[field.key]">
@@ -156,7 +146,8 @@ export default {
         }
 
         onMounted(() => {
-            getList()
+            getList();
+            fetchFondList();
         })
         const fields = computed(() => {
             return Protocols?.fields
